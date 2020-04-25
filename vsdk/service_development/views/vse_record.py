@@ -47,11 +47,21 @@ def record(request, element_id, session_id):
 
         result.session = session
 
+        seed_type = "unknown"
+        if element_id == '51':
+            seed_type = "arachide"
+        elif element_id == '52':
+            seed_type = "fonio"
+        elif element_id == '53':
+            seed_type = "mais"
+        elif element_id == '54':
+            seed_type = "rice"
+
         number = session.caller_id
         timestamp = session.start.strftime("%d%m%Y%H%M%S")
         if number == None:
             number = 'local'
-        filename = 'bags_%s_%s_%s.wav' % (element_id, number, timestamp)
+        filename = 'bags_%s_%s_%s.wav' % (seed_type, number, timestamp)
 
         result.audio = request.FILES['recording']
         result.audio.name = filename
