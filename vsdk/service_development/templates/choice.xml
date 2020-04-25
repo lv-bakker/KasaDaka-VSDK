@@ -28,11 +28,12 @@
     {% for option_redirect in choice_options_redirect_urls %}
       {% if forloop.counter == 1 %}
       <if cond="choice == '{{ forloop.counter }}'">
-	      {% comment %} TODO hoe doe je een url opzoeken als je nog niet weet welke class object je naar refereert? {% endcomment %}
-      <goto next="{{ option_redirect }}"/>
+      {% comment %} <goto next="{{ option_redirect }}"/> {% endcomment %}
+	  <submit next="{{ option_redirect }}" enctype="multipart/form-data" method="post" namelist="choice"/>
       {% else %}
       <elseif cond="choice == '{{ forloop.counter }}'" />
-      <goto next="{{ option_redirect }}"/>
+      {% comment %} <goto next="{{ option_redirect }}"/> {% endcomment %}
+	  <submit next="{{ option_redirect }}" enctype="multipart/form-data" method="post" namelist="choice"/>
       {% endif %}
     {% endfor %}
 
