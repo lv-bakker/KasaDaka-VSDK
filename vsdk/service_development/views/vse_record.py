@@ -32,15 +32,13 @@ def record_generate_context(record_element, session):
 
     return context
 
-
 def record(request, element_id, session_id):
     record_element = get_object_or_404(Record, pk=element_id)
     voice_service = record_element.service
     session = lookup_or_create_session(voice_service, session_id)
 
 
-    # check if its audio recording post
-    if request.method == "POST" and 'recording' in request.POST:
+    if request.method == "POST":
         session = get_object_or_404(CallSession, pk=session_id)
 
         value = 'audio file'
@@ -49,16 +47,13 @@ def record(request, element_id, session_id):
 
         result.session = session
 
-        result.audio = request.FILES['recording']
-
         number = session.caller_id
+        timestamp = session.start.strftime("%d%m%Y%H%M%S")
         if number == None:
             number = 'local'
-        timestamp = session.start.strftime("%d%m%Y%H%M%S")
-        seed_type = int(request.POST['seedtype'])
-        # INFO: e.g. # bags_2_31612345678_24042020193513
-        filename = 'bags_%d_%s_%s.wav' % (seed_type, number, timestamp)
-        # result.audio.name = 'recording_%s_%s.wav' % (session_id, element_id)
+        filename = 'bags_%s_%s_%s.wav' % (element_id, number, timestamp)
+
+        result.audio = request.FILES['recording']
         result.audio.name = filename
         result.category = record_element.input_category
 
@@ -75,10 +70,5 @@ def record(request, element_id, session_id):
     context = record_generate_context(record_element, session)
 
     context['url'] = request.get_full_path(False)
-
-    # add choice value to next context
-    if request.method == "POST" and 'choice' in request.POST:
-        # print("Post from choice element, seed type = " + request.POST['choice'])
-        context['seed'] = int(request.POST['choice'])
 
     return render(request, 'record.xml', context, content_type='text/xml')
