@@ -4,11 +4,24 @@ plays back a message, then sends the user to the redirect
 #}
 
 {% block content %}
+
 <form>
 <block>
 <prompt>
 <audio src="{{ message_voice_fragment_url }}"/>
 </prompt>
+
+{% if phone_nr %}
+<prompt> You Call {{ phone_nr }} </prompt>
+{% endif %}
+
+{% if forward_call %}
+<!-- Call Forwarding Mali Seeds Test -->
+<transfer name="fwcall" dest="tel:1233">
+<prompt> Transfer your call. </prompt>
+</transfer>
+{% endif %}
+
 {% if redirect_url %}
 <goto next="{{ redirect_url }}"/>
 {% endif %}
@@ -16,4 +29,3 @@ plays back a message, then sends the user to the redirect
 </form>
 
 {% endblock %}
-

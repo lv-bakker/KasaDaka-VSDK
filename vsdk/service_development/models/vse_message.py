@@ -31,7 +31,7 @@ class MessagePresentation(VoiceServiceElement):
         """
         if self._redirect :
             return VoiceServiceElement.objects.get_subclass(id = self._redirect.id)
-        else: 
+        else:
             return None
 
     def __str__(self):

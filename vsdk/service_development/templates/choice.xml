@@ -25,17 +25,37 @@
 
 {# when there has been input, redirect the user to the corresponding URL #}
 <filled>
-    {% for option_redirect in choice_options_redirect_urls %}
-      {% if forloop.counter == 1 %}
-      <if cond="choice == '{{ forloop.counter }}'">
-	      {% comment %} TODO hoe doe je een url opzoeken als je nog niet weet welke class object je naar refereert? {% endcomment %}
-      <goto next="{{ option_redirect }}"/>
-      {% else %}
-      <elseif cond="choice == '{{ forloop.counter }}'" />
-      <goto next="{{ option_redirect }}"/>
-      {% endif %}
-    {% endfor %}
 
+	{% if mali_seeds_choose_phone %}
+
+		<assign name="redirect" expr="'{{ post_url }}'"/>
+		{% for phone_nr in phone_nrs %}
+			{% if forloop.counter == 1 %}
+				<if cond="choice == '{{ forloop.counter }}'">
+					<assign name="submit_phone" expr="'{{ phone_nr }}'"/>
+					<submit next="{{ post_url }}" enctype="multipart/form-data" method="post" namelist="submit_phone redirect"/>
+			{% else %}
+				<elseif cond="choice == '{{ forloop.counter }}'" />
+					<assign name="submit_phone" expr="'{{ phone_nr }}'"/>
+					<submit next="{{ post_url }}" enctype="multipart/form-data" method="post" namelist="submit_phone redirect"/>
+			{% endif %}
+		<goto next="{{ post_url }}"/>
+		{% endfor %}
+
+	{% else %}
+
+	    {% for option_redirect in choice_options_redirect_urls %}
+	      {% if forloop.counter == 1 %}
+	      <if cond="choice == '{{ forloop.counter }}'">
+		      {% comment %} TODO hoe doe je een url opzoeken als je nog niet weet welke class object je naar refereert? {% endcomment %}
+	      <goto next="{{ option_redirect }}"/>
+	      {% else %}
+	      <elseif cond="choice == '{{ forloop.counter }}'" />
+	      <goto next="{{ option_redirect }}"/>
+	      {% endif %}
+	    {% endfor %}
+
+	{% endif %}
 
     <else/>
     </if>
