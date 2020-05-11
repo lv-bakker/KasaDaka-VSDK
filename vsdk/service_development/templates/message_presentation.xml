@@ -12,8 +12,15 @@ plays back a message, then sends the user to the redirect
 </prompt>
 
 {% if phone_nr %}
-<prompt> You Call {{ phone_nr }} </prompt>
+<!-- Selected advertisement phone number -->
+    <prompt>
+    {% for digit in phone_nr %}
+        <audio src="{{ digit }}"/>
+        <break time="3000ms"/>
+    {% endfor %}
+    </prompt>
 {% endif %}
+
 
 {% if forward_call %}
 <!-- Call Forwarding Mali Seeds Test -->

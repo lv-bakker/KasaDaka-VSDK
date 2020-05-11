@@ -27,13 +27,24 @@ def message_presentation(request, element_id, session_id):
 
     if element_id == '47':
         if request.method == "POST":
-            print("POST to message presentation")
+            # print("POST to message presentation")
             phone = request.POST['submit_phone']
-            print("Received Phone: " + str(phone))
+            # print("Received Phone: " + str(phone))
             session.target_phonenr = phone # store in db
             session.record_step()
             return redirect(request.POST['redirect'])
-        context['phone_nr'] = 'test ' + str(session.target_phonenr)
+
+        lang = str(session._language.code)
+        number = "0000000000" # dummy
+        if session.target_phonenr != None:
+            number = str(session.target_phonenr)
+
+        # format: 1_en.wav
+        url = 'http://ict4d.saadittoh.com/group12/django/'
+        digits = []
+        for d in number:
+            digits.append(url + d + '_' + lang + '.wav')
+        context['phone_nr'] = digits
 
     # /vxml/message/39/92
     # if element_id == '39':
