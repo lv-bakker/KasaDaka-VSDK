@@ -59,7 +59,7 @@ def record(request, element_id, session_id):
 
         lang = str(session._language.code)
         number = session.caller_id
-        timestamp = session.start.strftime("%d%m%Y%H%M%S")
+        timestamp = session.end.strftime("%d%m%Y%H%M%S")
         if number == None:
             number = 'local'
         filename = 'bags_%s_%s_%s_%s.wav' % (lang, seed_type, number, timestamp)

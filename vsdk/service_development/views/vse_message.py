@@ -40,10 +40,9 @@ def message_presentation(request, element_id, session_id):
             number = str(session.target_phonenr)
 
         # format: 1_en.wav
-        url = 'http://ict4d.saadittoh.com/group12/django/'
         digits = []
         for d in number:
-            digits.append(url + d + '_' + lang + '.wav')
+            digits.append(settings.MEDIA_URL + d + '_' + lang + '.wav')
         context['phone_nr'] = digits
 
     # /vxml/message/39/92

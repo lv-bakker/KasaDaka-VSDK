@@ -50,48 +50,41 @@ def choice(request, element_id, session_id):
 
     seed_search_choices = ['55', '58', '61', '64']  # 13
     if element_id in seed_search_choices:
-
-        seedtype = "rice"
+        # rice
+        catid = 5
         bags_of_seedtype_wav = "bags_of_rice.wav"
+        # arachide
         if element_id == '55':
-            seedtype = "arachide"
+            catid = 3
             bags_of_seedtype_wav = "bags_of_arachide.wav"
+        # fonio
         elif element_id == '58':
-            seedtype = "fonio"
+            catid = 2
             bags_of_seedtype_wav = "bags_of_fonio.wav"
+        # mais
         elif element_id == '61':
-            seedtype = "mais"
+            catid = 4
             bags_of_seedtype_wav = "bags_of_mais.wav"
 
-        # 1. fetch all the stored advertisements (WAV files)
-        url = "http://ict4d.saadittoh.com/group12/django/uploads/"
-        refs = re.findall(r'(?<=<a href=")[^"]*', requests.get(url).text)
-        wavs = [idx for idx in refs if idx.startswith("bags")]
+        # 1. fetch recordings from db with right category
+        advertisements = list(SpokenUserInput.objects.filter(category_id=catid))
 
         new_voice_labels = []
         phones = []
-
-        # 2. find the advertisements related to this search
         cur_lang = str(session._language.code)
-        print("----- WAV storage: -----")
-        for wav in wavs:
-            wav_data = wav.split('_')
-            # 0 bags 1 lang 2 seedtype 3 phonenr 4 datetime
-            if cur_lang == wav_data[1] and wav_data[2] == seedtype: # request is searching for this
-                print(wav, wav_data[2], wav_data[3])
-                new_voice_labels.append(url + wav)
+
+        for ad in advertisements:
+            wav_data = str(ad.audio).split('_')
+            if cur_lang == wav_data[1]:
+                new_voice_labels.append(settings.MEDIA_URL + str(ad.audio))
                 phones.append(wav_data[3])
 
         # 3. update the context to match the request (if there are stored ads)
         if len(new_voice_labels) > 0:
             context['mali_seeds_choose_phone'] = 1
-            context['bags_of_seedtype'] = 'http://ict4d.saadittoh.com/group12/django/' + cur_lang + '_' + bags_of_seedtype_wav
+            context['bags_of_seedtype'] = settings.MEDIA_URL + cur_lang + '_' + bags_of_seedtype_wav
             context['phone_nrs'] = phones
-            context['post_url'] = (context['choice_options_redirect_urls'])[0] #'/vxml/message/12/39'
-
-            # choice_options_voice_labels: ['/uploads/1_nl.wav', '/uploads/2_nl.wav']
-            # choice_options: <InheritanceQuerySet [<ChoiceOption: (test choice): opt1>, <ChoiceOption: (test choice): opt2>]>
-            # choice_options_redirect_urls: ['/vxml/message/12/34', '/vxml/message/12/34']
+            context['post_url'] = (context['choice_options_redirect_urls'])[0] # i.e. message presentation
             context['choice_options_voice_labels'] = new_voice_labels
             context['choice_options'] = range(1, len(new_voice_labels)+1)
 
